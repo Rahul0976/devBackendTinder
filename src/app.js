@@ -43,7 +43,7 @@ app.delete("/user", async (req, res) => {
     await User.findByIdAndDelete(userId);
     res.send("User Deleted Succefully ");
   } catch (err) {
-    res.status(400).send("Something wents worng");
+    res.status(400).send("Update faild" + err.message);
   }
 });
 // update user
@@ -51,7 +51,7 @@ app.patch("/user", async (req, res) => {
   const userId = req.body.userId;
   const data = req.body;
   try {
-    await User.findByIdAndUpdate(userId, data);
+    await User.findByIdAndUpdate(userId, data, { runValidators: true });
     res.send("updated");
   } catch (err) {
     res.status(400).send("something went wrong");
