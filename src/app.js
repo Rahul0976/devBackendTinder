@@ -4,6 +4,7 @@ const { validateSignUpData } = require("./utils/validation");
 const app = express();
 const User = require("./models/user");
 app.use(express.json());
+//SignUp User
 app.post("/signup", async (req, res) => {
   try {
     //validation
@@ -29,6 +30,25 @@ app.post("/signup", async (req, res) => {
     res.send("user added succefully");
   } catch (err) {
     res.status(400).send("Error saving the user:" + err.message);
+  }
+});
+//Login User
+app.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } = req.body;
+    const user = await User.findOne({ emailId: emailId });
+    if (!user) {
+      throw new Error("Invalid credentials");
+    } else {
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (isPasswordValid) {
+        res.send("Login successful!!");
+      } else {
+        throw new Error("Invalid credentials");
+      }
+    }
+  } catch (err) {
+    res.status(400).send("Error :" + err.message);
   }
 });
 //Feed API -GET /feed-> get all the user
