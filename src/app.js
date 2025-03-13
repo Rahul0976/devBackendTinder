@@ -1,12 +1,27 @@
 const express = require("express");
 const connectDB = require("./config/database");
+const { validateSignUpData } = require("./utils/validation");
 const app = express();
 const User = require("./models/user");
 app.use(express.json());
 app.post("/signup", async (req, res) => {
-  // creating a new instance of the User model
-  const user = new User(req.body);
   try {
+    //validation
+    validateSignUpData(req);
+    //encrypt the password
+    const { password, firstName, lastName, age, emailId, gender, skills } =
+      req.body;
+    const passwordHash = await bcrypt.hash(password, 10);
+    // creating a new instance of the User model
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      age,
+      gender,
+      skills,
+      password: passwordHash,
+    });
     if (user.skills.length > 10) {
       throw new Error("Skills cannot be more then 10");
     }
@@ -78,5 +93,5 @@ connectDB()
     });
   })
   .catch((err) => {
-    console.log("database not connected");
+    console.log("database not connected", err);
   });
