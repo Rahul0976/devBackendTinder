@@ -83,6 +83,7 @@ userRouter.get("/feed", authAdmin, async (req, res) => {
       .select("firstName lastName photoUrl age skills about")
       .skip(skip)
       .limit(limit);
+    res.json({ data: users });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
